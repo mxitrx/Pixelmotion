@@ -1,279 +1,232 @@
+/* === Global Styles & Variables === */
+:root {
+  --primary-color: #C9FF00; /* สีเขียวมะนาว */
+  --dark-bg: #171717;
+  --light-bg: #222222;
+  --text-color: #FFFFFF;
+  --text-muted: #AAAAAA;
+  --border-radius: 12px;
+}
+
 body {
   font-family: 'Sarabun', sans-serif;
-  background: #171717;
+  background-color: var(--dark-bg);
+  color: var(--text-color);
   margin: 0;
-  padding: 0;
+  padding-bottom: 80px; /* Space for navbar */
 }
 
 .container {
+  max-width: 960px;
+  margin: 20px auto;
+  padding: 0 15px;
+}
+
+h1, h2, h3 {
+  color: var(--primary-color);
+  text-align: center;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+/* === Back Button === */
+.back-btn {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: var(--light-bg);
+  color: var(--text-color);
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  z-index: 1000;
+  font-size: 16px;
+}
+
+/* === Product Grid & Cards (track.html) === */
+.product-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.product-card {
+  background-color: var(--light-bg);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(201, 255, 0, 0.1);
+}
+
+.product-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.product-info {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.product-info h3 {
+  margin-top: 0;
+  text-align: left;
+  font-size: 1.2rem;
+}
+
+.product-specs {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  flex-grow: 1;
+  margin-bottom: 15px;
+}
+
+.product-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+.product-price {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: var(--text-color);
+}
+
+.rent-btn {
+  background-color: var(--primary-color);
+  color: var(--dark-bg);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.rent-btn:hover {
+  background-color: #b2e000;
+}
+
+/* === Payment Form (payment.html) === */
+.payment-container {
   max-width: 600px;
-  margin: 20px auto 80px; /* เว้นที่ด้านล่างให้ Navbar */
-  background: #fff;
-  padding: 60px;
-  border-radius: 15px;
+  margin: 80px auto;
+  background-color: var(--light-bg);
+  border-radius: var(--border-radius);
+  padding: 30px 40px;
   box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 
-.containerinfo {
-  max-width: 100%;
-  background: none;
-  padding: 10px;
-  border-radius: 15px;
+.form-group {
+  margin-bottom: 20px;
 }
 
-h1, h2 {
-  text-align: center;
-  color: #171717;
-}
-
-form label {
+.form-group label {
   display: block;
-  margin-top: 10px;
+  margin-bottom: 5px;
   font-weight: bold;
+  color: var(--text-muted);
 }
 
-form input {
-  width: 95%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-}
-
-button {
-  margin-top: 15px;
-  padding: 12px;
+.form-group input,
+.form-group select,
+.form-group textarea {
   width: 100%;
-  background: #171717;
-  color: #fff;
-  font-size: 16px;
-  border: none;
+  padding: 12px;
   border-radius: 8px;
-  cursor: pointer;
-  transition: 0.3s;
+  border: 1px solid #444;
+  background-color: #333;
+  color: var(--text-color);
+  font-size: 16px;
+  font-family: 'Sarabun', sans-serif;
 }
 
-button:hover {
-  background: #C9FF00;
-}
-
-#farmerList {
+.summary {
+  text-align: right;
+  font-size: 1.2rem;
+  font-weight: bold;
   margin-top: 20px;
 }
 
-.card {
-  background: #f6f6f6;
+.confirm-btn {
+  width: 100%;
   padding: 15px;
-  margin-bottom: 10px;
-  border-radius: 10px;
+  margin-top: 20px;
+  background-color: var(--primary-color);
+  color: var(--dark-bg);
+  border: none;
+  border-radius: 8px;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* ✅ Bottom Navigation */
+.confirm-btn:hover {
+  background-color: #b2e000;
+}
+
+.confirm-btn:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+
+/* === Navbar === */
 .navbar {
   position: fixed;
   bottom: 0; left: 0; right: 0;
   height: 60px;
   display: flex;
-  justify-content: space-around;
-  align-items: center;
-  background: #C9FF00;
+  background: var(--light-bg);
+  border-top: 1px solid #333;
   z-index: 999;
 }
 
 .navbar a {
   flex: 1;
-  text-align: center;
-  color: #171717;
-  text-decoration: none;
-  font-size: 22px;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   align-items: center;
-  padding: 5px 0;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 22px;
 }
 
 .navbar a span {
   font-size: 12px;
+  margin-top: 2px;
 }
 
-.navbar a.active,
-.navbar a:hover {
-  color: #11ec2e;
+.navbar a.active {
+  color: var(--primary-color);
 }
 
-/* ✅ Responsive */
-@media (max-width: 768px) {
-  .container {
-    width: 90%;
-    margin: 10px auto 80px;
-    padding: 15px;
-  }
-
-  h1 {
-    font-size: 20px;
-  }
-
-  button {
-    font-size: 14px;
-    padding: 10px;
-  }
-}
-
-/* ปุ่มย้อนกลับซ้ายบน */
-.back-btn {
-  position:static;
-  width:105px;
-  font-family: 'Sarabun', sans-serif;
-}
-
-/* โปรไฟล์ box */
-.profile-box {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  background: #ffffff;
-}
-
-/* จัดรูป + ข้อมูลเป็นแถว */
-.profile-content {
-  display: flex;
-  align-items: right;
-  gap: 20px; /* ระยะห่างรูปกับข้อความ */
-}
-
-/* รูปโปรไฟล์ */
-.profile-pic {
-  width: 150px;
-  height: 170px;
-  border-radius: 10px;
-  object-fit: cover;
-}
-
-/* ข้อมูลโปรไฟล์ */
-.profile-info p {
-  font-size: 15px;
-  color: #171717;
-  text-align: left;
-  line-height: 20px;
-  
-}
-.placeholder {
-  font-family: 'Sarabun', sans-serif;
-  font-size: 15px;
-
-}
-
- th, td {
-      border: 1px solid #ddd;
-      text-align: center;
-      padding: 10px;
-      
-    }
-    
-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-.rent-btn {
-      background-color: #171717;
-      color: white;
-      border: none;
-      padding: 8px 14px;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: 0.2s;
-      font-family: 'Sarabun', sans-serif;
-    } 
-    
-img {
-      width: 100px;
-      height: 100px;
-      border-radius: 8px;
-      object-fit: cover;
-    }
-
-/* ===================== */
-/* 💳 Payment Page Style */
-/* ===================== */
-.payment-container {
-  max-width: 600px;
-  margin: 80px auto;
-  background: #fff;
-  border-radius: 15px;
-  padding: 30px 40px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-}
-
-.payment-container h1 {
-  text-align: center;
-  color: #171717;
-}
-
-.payment-container label {
-  display: block;
+.success, .error {
+   text-align: center;
+   font-weight: bold;
   margin-top: 15px;
-  font-weight: bold;
-  color: #171717;
 }
+.success { 
+  color: green; }
 
-.payment-container input,
-.payment-container select,
-.payment-container textarea {
-  width: 100%;
-  padding: 10px;
-  margin-top: 5px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  font-family: 'Sarabun', sans-serif;
-}
-
-.payment-container textarea {
-  resize: none;
-}
-
-.summary {
-  background: #f6f6f6;
-  padding: 12px;
-  border-radius: 10px;
-  margin-top: 15px;
-  text-align: right;
-  font-weight: bold;
-  color: #171717;
-}
-
-.confirm-btn {
-  background-color: #C9FF00;
-  color: #171717;
-  border: none;
-  padding: 12px;
-  width: 100%;
-  margin-top: 25px;
-  border-radius: 10px;
-  font-size: 18px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: 0.3s;
-  font-family: 'Sarabun', sans-serif;
-}
-
-.confirm-btn:hover {
-  background-color: #a3db00;
-}
-
-.back-btn {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  background: #171717;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 6px 12px;
-  cursor: pointer;
-  z-index: 999;
-}
-
-
+.error { 
+  color: red; }

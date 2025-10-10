@@ -1,82 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>ชำระเงิน | Pixelmotion</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ชำระเงิน — ระบบเช่า/ร้าน</title>
+  <!-- ใช้ styles.css ที่อัปโหลดไว้ -->
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
-
 <body>
   <button class="back-btn" onclick="history.back()">← ย้อนกลับ</button>
 
-  <div class="payment-container">
-    <h1>💳 ชำระเงิน</h1>
-    <form id="paymentForm">
-      <label>ชื่อ-นามสกุล ผู้เช่า</label>
-      <input type="text" placeholder="กรอกชื่อเต็มของคุณ" required>
+  <div class="payment-container container">
+    <h1>ชำระเงิน</h1>
 
-      <label>อีเมล</label>
-      <input type="email" placeholder="example@email.com" required>
+    <form id="paymentForm" onsubmit="return handleSubmit(event)">
+      <label for="fullname">ชื่อ-นามสกุล</label>
+      <input id="fullname" name="fullname" type="text" placeholder="ชื่อ-นามสกุลผู้ชำระ" required>
 
-      <label>เบอร์โทรศัพท์</label>
-      <input type="tel" placeholder="0812345678" required>
+      <label for="phone">เบอร์โทรศัพท์</label>
+      <input id="phone" name="phone" type="tel" placeholder="0812345678" pattern="[0-9+ -]{7,20}" required>
 
-      <label>เลือกอุปกรณ์ที่เช่า</label>
-      <select required>
-        <option value="">-- กรุณาเลือก --</option>
-        <option>Panasonic AG-UX 180 - ฿1,500/วัน</option>
-        <option>DJI SDR Transmission - ฿500/วัน</option>
-        <option>ไฟสตูดิโอ Softbox - ฿500/วัน</option>
-      </select>
+      <label for="email">อีเมล (ถ้ามี)</label>
+      <input id="email" name="email" type="email" placeholder="you@example.com">
 
-      <label>จำนวนวันที่เช่า</label>
-      <input type="number" id="days" placeholder="เช่ากี่วัน" min="1" required>
+      <label for="item">รายการ</label>
+      <input id="item" name="item" type="text" placeholder="ชื่อสินค้า/บริการ" required>
 
-      <label>ที่อยู่สำหรับจัดส่ง / รับของ</label>
-      <textarea rows="3" placeholder="เช่น 123/4 ซอย... แขวง... เขต..." required></textarea>
+      <label for="amount">ยอดสุทธิ (บาท)</label>
+      <input id="amount" name="amount" type="number" min="0" step="0.01" placeholder="0.00" required>
 
-      <div class="summary">
-        ยอดรวมโดยประมาณ: <span id="totalPrice">฿0</span>
-      </div>
+      <label for="note">หมายเหตุ (อา. หมายเลขคำสั่งซื้อ/รอบเช่า)</label>
+      <textarea id="note" name="note" rows="3" placeholder="หมายเหตุเพิ่มเติม"></textarea>
 
-      <button type="submit" class="confirm-btn">ยืนยันการชำระเงิน</button>
+      <div class="summary" id="summary">ยอดรวม: - บาท</div>
+
+      <button type="submit" class="confirm-btn">ยืนยันและบันทึก</button>
     </form>
+
+    <div id="result" style="margin-top:12px;"></div>
   </div>
 
-  <div class="navbar">
-    <a href="index.html">🏠<span>หน้าหลัก</span></a>
-    <a href="track.html">📋<span>รายการทั้งหมด</span></a>
-    <a href="profile.html" class="active">👤<span>ติดต่อเรา</span></a>
-  </div>
 
-  <script>
-    const select = document.querySelector('select');
-    const daysInput = document.querySelector('#days');
-    const totalPrice = document.querySelector('#totalPrice');
-    const form = document.querySelector('#paymentForm');
-
-    function updateTotal() {
-      const priceMap = {
-        "Panasonic AG-UX 180 - ฿1,500/วัน": 1500,
-        "DJI SDR Transmission - ฿500/วัน": 300,
-        "ไฟสตูดิโอ Softbox - ฿500/วัน": 500
-      };
-      const selected = select.value;
-      const days = parseInt(daysInput.value) || 0;
-      const total = priceMap[selected] ? priceMap[selected] * days : 0;
-      totalPrice.textContent = `฿${total.toLocaleString()}`;
-    }
-
-    select.addEventListener('change', updateTotal);
-    daysInput.addEventListener('input', updateTotal);
-
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      alert("✅ ขอบคุณที่ใช้บริการ! ระบบได้บันทึกคำสั่งเช่าของคุณเรียบร้อยแล้ว");
-      window.location = "track.html";
-    });
-  </script>
 </body>
 </html>

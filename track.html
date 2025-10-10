@@ -2,55 +2,48 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <title>Pixelmotion</title>
+  <title>รายการอุปกรณ์ให้เช่า | Pixelmotion</title>
   <link rel="stylesheet" href="styles.css">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
-<!-- ปุ่มย้อนกลับ -->
+<body>
   <button class="back-btn" onclick="history.back()">← ย้อนกลับ</button>
 
-<div class="container">
-    <h1>📋 รายการทั้งหมด</h1>
-    <table>
-      <thead>
-        <tr>
-          <th>รูปสินค้า</th>
-          <th>รายละเอียด</th>
-          <th>ราคา/วัน</th>
-          <th>เช่า</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><img src="image/agux.jpg" alt="อุปกรณ์ 1"></td>
-          <td><strong>Panasonic AG-UX 180</strong><br></td>
-          <td>฿1,500</td>
-          <td><button class="rent-btn" onclick="window.location='payment.html'">เช่า</button></td>
-        </tr>
-
-        <tr>
-          <td><img src="image/dji.jpg" alt="อุปกรณ์ 2"></td>
-          <td><strong>DJI SDR Transmission</strong><br></td>
-          <td>฿1000</td>
-          <td><button class="rent-btn" onclick="window.location='payment.html'">เช่า</button></td>
-        </tr>
-
-        <tr>
-          <td><img src="https://via.placeholder.com/100" alt="อุปกรณ์ 3"></td>
-          <td><strong>ไฟสตูดิโอ </strong><br>แสงนุ่ม เหมาะกับงานถ่ายภาพสินค้า</td>
-          <td>฿500</td>
-          <td><button class="rent-btn" onclick="window.location='payment.html'">เช่า</button></td>
-        </tr>
-      </tbody>
-    </table>
+  <div class="container">
+    <h1>📋 อุปกรณ์ทั้งหมดสำหรับเช่า</h1>
+    
+    <div id="product-list" class="product-grid"></div>
   </div>
 
   <div class="navbar">
     <a href="index.html">🏠<span>หน้าหลัก</span></a>
-    <a href="track.html" class="active">📋<span>รายการทั้งหมด</span></a>
+    <a href="track.html" class="active">📋<span>รายการ</span></a>
     <a href="profile.html">👤<span>ติดต่อเรา</span></a>
   </div>
+
+  <script src="products.js"></script>
+  <script>
+    const productListContainer = document.getElementById('product-list');
+
+    // วนลูปสร้าง card สินค้าจากข้อมูลใน products.js
+    products.forEach(product => {
+      const card = document.createElement('div');
+      card.className = 'product-card';
+      
+      card.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" class="product-image">
+        <div class="product-info">
+          <h3>${product.name}</h3>
+          <p class="product-specs">${product.specs}</p>
+          <div class="product-footer">
+            <span class="product-price">${product.priceText}</span>
+            <a href="payment.html?id=${product.id}" class="rent-btn">เช่าเลย</a>
+          </div>
+        </div>
+      `;
+      productListContainer.appendChild(card);
+    });
+  </script>
 </body>
 </html>
