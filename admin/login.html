@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Admin Login</title>
+  <title>เข้าสู่ระบบ</title>
   <link rel="stylesheet" href="../styles.css">
   <style>
     /* Login-specific styles */
@@ -41,13 +41,13 @@
 <body>
 
   <div class="login-container">
-    <h1>Admin Access</h1>
+    <h1>เข้าสู่ระบบ</h1>
     <form id="loginForm">
       <div class="form-group">
-        <label for="secretKey">Secret Key</label>
-        <input id="secretKey" name="secretKey" type="password" placeholder="Enter your secret key" required>
+        <label for="secretKey">รหัสผ่าน</label>
+        <input id="secretKey" name="secretKey" type="password" placeholder="ใส่รหัสผ่านของคุณ" required>
       </div>
-      <button type="submit" class="confirm-btn">Login</button>
+      <button type="submit" class="confirm-btn">เข้าสู่ระบบ</button>
     </form>
     <div id="errorMessage" class="error-msg"></div>
   </div>
@@ -75,12 +75,13 @@
 
       } else {
         // --- Login ไม่สำเร็จ ---
-        errorMessage.textContent = 'Secret Key ไม่ถูกต้อง!';
+        errorMessage.textContent = 'รหัสผ่าน ไม่ถูกต้อง!';
         errorMessage.style.display = 'block';
         secretKeyInput.focus();
       }
     });
   </script>
+
 
 </body>
 </html>

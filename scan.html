@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ชำระเงิน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f4f7f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #007bff;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .header h2 {
+            margin: 0;
+            font-size: 1.6em;
+        }
+        .content {
+            padding: 25px;
+        }
+        .order-summary, .payment-method {
+            margin-bottom: 25px;
+        }
+        h3 {
+            border-bottom: 2px solid #eeeeee;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #333;
+        }
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 1em;
+        }
+        .total {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            font-size: 1.25em;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #007bff;
+        }
+        .qr-section {
+            text-align: center;
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        .qr-section p {
+            margin: 0 0 15px 0;
+            color: #555;
+            font-size: 0.95em;
+        }
+        #qrCodeImage {
+            width: 80%;
+            max-width: 250px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            background-color: white;
+        }
+        .footer {
+            text-align: center;
+            padding: 15px;
+            font-size: 0.85em;
+            color: #888;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header">
+            <h2>ยืนยันและชำระเงิน</h2>
+        </div>
+
+        <div class="content">
+            <div class="order-summary">
+                <h3>สรุปรายการ</h3>
+                <div class="order-item">
+                    <span>สินค้าตัวอย่าง A (x1)</span>
+                    <span>350.00 บาท</span>
+                </div>
+                <div class="order-item">
+                    <span>ค่าจัดส่ง</span>
+                    <span>50.00 บาท</span>
+                </div>
+                <div class="total">
+                    <span>ยอดที่ต้องชำระ</span>
+                    <span id="totalAmountText">400.00 บาท</span>
+                </div>
+            </div>
+
+            <div class="payment-method">
+                <h3>ชำระเงินผ่าน QR Code (พร้อมเพย์)</h3>
+                <div class="qr-section">
+                    <p>สแกน QR Code นี้เพื่อชำระเงินผ่าน<br>แอปพลิเคชัน Mobile Banking ของคุณ</p>
+                    <img id="qrCodeImage" src="" alt="QR Code สำหรับชำระเงิน">
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>🔒 การชำระเงินปลอดภัย</p>
+        </div>
+    </div>
+
+    <script>
+        // --- ⚙️ ส่วนตั้งค่า: กรุณาแก้ไขข้อมูลในส่วนนี้ ---
+
+        // 1. ใส่เบอร์โทรศัพท์พร้อมเพย์ของร้านคุณ
+        const PROMPTPAY_ID = '0972653945'; 
+
+        // 2. กำหนดยอดเงินที่ต้องการชำระ (สามารถดึงค่านี้มาจากระบบหลังบ้านได้)
+        const TOTAL_AMOUNT = 400.00; 
+
+        // --- จบส่วนตั้งค่า ---
+
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const qrCodeImage = document.getElementById('qrCodeImage');
+            const totalAmountText = document.getElementById('totalAmountText');
+
+            // อัปเดตข้อความยอดรวมในหน้าเว็บ
+            totalAmountText.textContent = `${TOTAL_AMOUNT.toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท`;
+
+            // สร้าง QR Code จากข้อมูลที่ตั้งค่าไว้
+            function generateQrCode(promptpayId, amount) {
+                // ใช้บริการของ promptpay.io เพื่อสร้าง payload
+                const payload = `https://promptpay.io/${promptpayId}/${amount.toFixed(2)}`;
+                
+                // ใช้ Google Charts API ในการสร้างรูปภาพ QR Code
+                const qrApiUrl = `https://chart.googleapis.com/chart?chs=300x300&cht=qr&chl=${encodeURIComponent(payload)}&choe=UTF-8`;
+                
+                // นำ URL ที่ได้ไปใส่ในรูปภาพ
+                qrCodeImage.src = qrApiUrl;
+            }
+
+            // เรียกใช้ฟังก์ชันเพื่อสร้าง QR Code เมื่อหน้าเว็บโหลด
+            generateQrCode(PROMPTPAY_ID, TOTAL_AMOUNT);
+        });
+    </script>
+
+</body>
+</html>
