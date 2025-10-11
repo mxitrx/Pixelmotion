@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>รายละเอียดสินค้า | Pixelmotion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+</head>
+<body>
+  <div class="container" id="product-detail-container">
+    </div>
+
+  <div class="navbar">
+    <a href="index.html">🏠<span>หน้าหลัก</span></a>
+    <a href="track.html">📋<span>รายการ</span></a>
+    <a href="cart.html">🛒<span id="cart-count">ตะกร้า (0)</span></a>
+    <a href="profile.html">👤<span>ติดต่อเรา</span></a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+  <script src="https://npmcdn.com/flatpickr/dist/l10n/th.js"></script>
+
+  <script src="scripts/products.js"></script>
+  <script src="scripts/cart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const container = document.getElementById('product-detail-container');
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get('id');
+      const product = products.find(p => p.id === productId);
+
+      if (!product) {
+        container.innerHTML = '<h1>ไม่พบสินค้า</h1>';
+        return;
+      }
+
+      container.innerHTML = `
+        <img src="${product.image}" alt="${product.name}" class="product-detail-image">
+        <h1>${product.name}</h1>
+        <p class="product-detail-specs">${product.specs}</p>
+        <div class="product-detail-price">${product.priceText}</div>
+
+        <div class="form-group">
+          <label for="rent-dates">เลือกวันเช่า - วันคืน:</label>
+          <input id="rent-dates" type="text" placeholder="กรุณาเลือกช่วงวันที่ต้องการเช่า">
+        </div>
+
+        <button id="addToCartBtn" class="confirm-btn">หยิบใส่ตะกร้า</button>
+      `;
+
+      // TODO: ดึงวันที่ไม่ว่างมาจาก Google Sheet
+      const unavailableDates = [];
+
+      const datePicker = flatpickr("#rent-dates", {
+        mode: "range",
+        minDate: "today",
+        dateFormat: "Y-m-d",
+        "locale": "th",
+        disable: unavailableDates
+      });
+
+      document.getElementById('addToCartBtn').addEventListener('click', () => {
+        const selectedDates = datePicker.selectedDates;
+        if (selectedDates.length < 2) {
+          alert("กรุณาเลือกช่วงวันเช่า-คืนให้ครบถ้วน");
+          return;
+        }
+        
+        const startDate = selectedDates[0];
+        const endDate = selectedDates[1];
+
+        // เพิ่มสินค้าลงตะกร้า
+        addToCart(product, startDate, endDate);
+      });
+    });
+  </script>
+</body>
+</html>

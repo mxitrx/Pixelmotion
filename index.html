@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <title>Pixelmotion | บริการไลฟ์สดและเช่าอุปกรณ์</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
   <style>
     .hero {
       background: #222;
@@ -44,7 +44,6 @@
       <h1>📷 Pixelmotion</h1>
       <p>บริการไลฟ์สดและเช่าอุปกรณ์คุณภาพสูง</p>
     </div>
-
     <div class="quick-actions">
       <a href="track.html" class="quick-btn">📋 เช่าอุปกรณ์</a>
       <a href="profile.html" class="quick-btn">👤 ติดต่อเรา</a>
@@ -52,9 +51,11 @@
   </div>
 
   <div class="navbar">
-    <a href="user/index.html" class="active">🏠<span>หน้าหลัก</span></a>
+    <a href="index.html" class="active">🏠<span>หน้าหลัก</span></a>
     <a href="track.html">📋<span>รายการ</span></a>
+    <a href="cart.html">🛒<span id="cart-count">ตะกร้า (0)</span></a>
     <a href="profile.html">👤<span>ติดต่อเรา</span></a>
   </div>
+  <script src="scripts/cart.js"></script>
 </body>
 </html>

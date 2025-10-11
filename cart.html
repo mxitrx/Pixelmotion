@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>ตะกร้าสินค้า | Pixelmotion</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="container">
+    <h1>🛒 ตะกร้าสินค้า</h1>
+    <div class="cart-layout">
+      <div id="cart-items-list" class="cart-items-list"></div>
+      <div id="cart-summary-box" class="cart-summary-box">
+        <h3>สรุปยอดการเช่า</h3>
+        <div class="summary-row">
+          <span>ยอดรวม</span>
+          <span id="cart-total">0.00 บาท</span>
+        </div>
+        <button id="checkoutBtn" class="confirm-btn">ดำเนินการต่อ</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="customer-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-btn">&times;</span>
+      <h2>กรอกข้อมูลผู้เช่า</h2>
+      <form id="customer-form">
+        <div class="form-group">
+          <label for="fullname">ชื่อ-นามสกุล</label>
+          <input id="fullname" type="text" placeholder="กรอกชื่อ-นามสกุล" required>
+        </div>
+        <div class="form-group">
+          <label for="phone">เบอร์โทรศัพท์</label>
+          <input id="phone" type="tel" placeholder="กรอกเบอร์โทรศัพท์" required>
+        </div>
+        <button type="submit" class="confirm-btn">บันทึกและไปต่อ</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="navbar">
+    <a href="index.html">🏠<span>หน้าหลัก</span></a>
+    <a href="track.html">📋<span>รายการ</span></a>
+    <a href="cart.html" class="active">🛒<span id="cart-count">ตะกร้า (0)</span></a>
+    <a href="profile.html">👤<span>ติดต่อเรา</span></a>
+  </div>
+
+  <script src="scripts/products.js"></script>
+  <script src="scripts/cart.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCartPage();
+
+      const modal = document.getElementById('customer-modal');
+      const checkoutBtn = document.getElementById('checkoutBtn');
+      const closeBtn = document.querySelector('.close-btn');
+
+      checkoutBtn.addEventListener('click', () => {
+        const cart = getCart();
+        if (cart.length === 0) {
+          alert("ตะกร้าสินค้าของคุณว่างเปล่า");
+          return;
+        }
+        modal.style.display = 'flex'; // แสดง Modal
+      });
+
+      closeBtn.onclick = () => {
+        modal.style.display = 'none';
+      };
+
+      window.onclick = (event) => {
+        if (event.target == modal) {
+          modal.style.display = 'none';
+        }
+      };
+
+      document.getElementById('customer-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const fullname = document.getElementById('fullname').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        
+        const customerData = { fullname, phone };
+        const cartData = getCart();
+        
+        sessionStorage.setItem('customerData', JSON.stringify(customerData));
+        sessionStorage.setItem('checkoutCart', JSON.stringify(cartData));
+        
+        window.location.href = 'payment.html';
+      });
+    });
+  </script>
+</body>
+</html>

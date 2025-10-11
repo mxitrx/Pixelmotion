@@ -3,32 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <title>รายการอุปกรณ์ให้เช่า | Pixelmotion</title>
-  <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="container">
     <h1>📋 อุปกรณ์ทั้งหมดสำหรับเช่า</h1>
-    
     <div id="product-list" class="product-grid"></div>
   </div>
 
   <div class="navbar">
     <a href="index.html">🏠<span>หน้าหลัก</span></a>
     <a href="track.html" class="active">📋<span>รายการ</span></a>
+    <a href="cart.html">🛒<span id="cart-count">ตะกร้า (0)</span></a>
     <a href="profile.html">👤<span>ติดต่อเรา</span></a>
   </div>
 
-  <script src="products.js"></script>
+  <script src="scripts/products.js"></script>
+  <script src="scripts/cart.js"></script>
   <script>
     const productListContainer = document.getElementById('product-list');
-
-    // วนลูปสร้าง card สินค้าจากข้อมูลใน products.js
     products.forEach(product => {
       const card = document.createElement('div');
       card.className = 'product-card';
-      
       card.innerHTML = `
         <img src="${product.image}" alt="${product.name}" class="product-image">
         <div class="product-info">
@@ -36,7 +34,7 @@
           <p class="product-specs">${product.specs}</p>
           <div class="product-footer">
             <span class="product-price">${product.priceText}</span>
-            <a href="payment.html?id=${product.id}" class="rent-btn">เช่าเลย</a>
+            <a href="product.html?id=${product.id}" class="rent-btn">ดูรายละเอียด</a>
           </div>
         </div>
       `;

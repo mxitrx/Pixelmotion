@@ -1,149 +1,119 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="th">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ชำระเงิน — ระบบเช่า/ร้าน</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>ยืนยันการเช่า | Pixelmotion</title>
+  <link rel="stylesheet" href="styles/main.css">
   <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
-
   <div class="payment-container container">
-    <h1>ชำระเงิน</h1>
-
-    <form id="paymentForm" novalidate>
+    <div id="confirmation-section">
+      <h1>ยืนยันข้อมูลการเช่า</h1>
+      
       <div class="form-group">
-        <label for="fullname">ชื่อ-นามสกุล</label>
-        <input id="fullname" name="fullname" type="text" placeholder="ชื่อ-นามสกุลผู้ชำระ" required>
-      </div>
-
-      <div class="form-group">
-        <label for="phone">เบอร์โทรศัพท์</label>
-        <input id="phone" name="phone" type="tel" placeholder="0812345678" pattern="[0-9+ -]{7,20}" required>
-      </div>
-
-      <div class="form-group">
-        <label for="email">อีเมล (ถ้ามี)</label>
-        <input id="email" name="email" type="email" placeholder="you@example.com">
-      </div>
-
-      <div class="form-group">
-        <label for="item">รายการ</label>
-        <select id="item" name="item" required>
-          <option value="" disabled selected>-- กรุณาเลือกสินค้า --</option>
-        </select>
+        <label>ชื่อ-นามสกุล</label>
+        <input id="fullname" type="text" readonly class="readonly-input">
       </div>
       <div class="form-group">
-        <label for="amount">ยอดสุทธิ (บาท)</label>
-        <input id="amount" name="amount" type="number" min="0" step="any" placeholder="0.00" required oninput="updateSummary()">
+        <label>เบอร์โทรศัพท์</label>
+        <input id="phone" type="tel" readonly class="readonly-input">
+      </div>
+      
+      <div class="summary-box">
+        <h3>สรุปรายการเช่า</h3>
+        <div id="item-summary-list"></div>
+        <div id="summary" class="summary-total">ยอดรวม: 0.00 บาท</div>
       </div>
 
-      <div class="form-group">
-        <label for="note">หมายเหตุ (อา. หมายเลขคำสั่งซื้อ/รอบเช่า)</label>
-        <textarea id="note" name="note" rows="3" placeholder="หมายเหตุเพิ่มเติม"></textarea>
-      </div>
+      <p class="confirmation-note">กรุณาตรวจสอบข้อมูลให้ถูกต้อง<br>จากนั้นกดยืนยันการเช่าเพื่อส่งข้อมูลการจอง</p>
 
-      <div class="summary" id="summary">ยอดรวม: 0.00 บาท</div>
-
-      <button type="submit" id="submitBtn" class="confirm-btn">ยืนยันและบันทึก</button>
-    </form>
-    
-    <div id="result"></div>
+      <button id="confirmBtn" class="confirm-btn">ยืนยันการเช่า</button>
+      <div id="result" class="result-message"></div>
+    </div>
   </div>
 
   <div class="navbar">
     <a href="index.html">🏠<span>หน้าหลัก</span></a>
-    <a href="track.html" class="active">📋<span>รายการ</span></a>
+    <a href="track.html">📋<span>รายการ</span></a>
+    <a href="cart.html" class="active">🛒<span id="cart-count">ตะกร้า (0)</span></a>
     <a href="profile.html">👤<span>ติดต่อเรา</span></a>
   </div>
 
-  <script src="products.js"></script>
+  <script src="scripts/cart.js"></script>
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFxzJfM1GZjc1HsvGLpsUYYSRLQj59WFKz-wWsW-bpxRpQrlyme_k8SILvPFZ-FCJF/exec"; // <-- ใส่ URL ใหม่ที่ได้จากการ Deploy
-
-    const form = document.getElementById('paymentForm');
-    const paymentContainer = document.querySelector('.payment-container');
-    const submitBtn = document.getElementById('submitBtn');
-    const resultDiv = document.getElementById('result');
-    const summaryDiv = document.getElementById('summary');
-    const amountInput = document.getElementById('amount');
-    const itemSelect = document.getElementById('item');
+    // 🔴 อย่าลืมใส่ URL ของ Google Apps Script ที่ Deploy แล้ว
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxF23uipeV9nWOdo6MDkS3bBuycrJnr_23kUi56l1vWSWxYSz3vBTAaqwHIiRHCiRSC/exec";
 
     document.addEventListener('DOMContentLoaded', () => {
-      // สร้าง Dropdown
-      products.forEach(product => {
-        const option = document.createElement('option');
-        option.value = product.name;
-        option.textContent = `${product.name} (${product.priceText})`;
-        option.dataset.price = product.price;
-        itemSelect.appendChild(option);
-      });
+      const checkoutCart = JSON.parse(sessionStorage.getItem('checkoutCart')) || [];
+      const customerData = JSON.parse(sessionStorage.getItem('customerData'));
 
-      // รับค่าสินค้าจาก URL parameter
-      const urlParams = new URLSearchParams(window.location.search);
-      const selectedItem = urlParams.get('item');
-      if (selectedItem) {
-        itemSelect.value = selectedItem;
-        // Trigger change event to update price
-        itemSelect.dispatchEvent(new Event('change'));
-      }
-    });
-
-    itemSelect.addEventListener('change', (event) => {
-        const selectedOption = event.target.options[event.target.selectedIndex];
-        const price = selectedOption.dataset.price;
-        if (price) {
-          amountInput.value = price;
-          updateSummary();
-        }
-      });
-
-    function updateSummary() {
-      const amount = parseFloat(amountInput.value) || 0;
-      summaryDiv.textContent = `ยอดรวม: ${amount.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`;
-    }
-
-    form.addEventListener('submit', (e) => {
-      e.preventDefault();
-      if (!form.checkValidity()) {
-        form.reportValidity();
+      if (checkoutCart.length === 0 || !customerData) {
+        window.location.href = 'cart.html';
         return;
       }
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'กำลังบันทึก...';
-      resultDiv.style.display = 'none';
 
-      const formData = new FormData(form);
+      // แสดงข้อมูลลูกค้าแบบแก้ไขไม่ได้
+      document.getElementById('fullname').value = customerData.fullname;
+      document.getElementById('phone').value = customerData.phone;
+
+      // แสดงรายการและยอดรวม
+      const totalAmount = checkoutCart.reduce((sum, item) => sum + item.totalPrice, 0);
+      document.getElementById('summary').textContent = `ยอดรวม: ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท`;
       
-      fetch(SCRIPT_URL, { method: 'POST', body: formData })
-      .then(response => response.json())
-      .then(data => {
-        if (data.result === "success") {
-          paymentContainer.innerHTML = `
-            <h2>บันทึกข้อมูลสำเร็จ</h2>
-            <p>เราได้บันทึกข้อมูลการชำระเงินของคุณเรียบร้อยแล้ว</p>
-            <p><strong>หมายเลขคำสั่งซื้อ:</strong></p>
-            <p style="font-size: 1.5rem; color: var(--primary-color); background: var(--dark-bg); padding: 10px; border-radius: 8px;">${data.transactionId}</p>
-            <p>กรุณาเก็บหมายเลขนี้ไว้เพื่อใช้ในการอ้างอิง</p>
-            <a href="track.html" class="confirm-btn" style="display: block; text-align: center; margin-top: 20px;">กลับสู่หน้าแรก</a>
+      const itemListDiv = document.getElementById('item-summary-list');
+      itemListDiv.innerHTML = checkoutCart.map(item => `
+        <div class="summary-item">- ${item.name} (${item.rentDays} วัน)</div>
+      `).join('');
+
+      const confirmBtn = document.getElementById('confirmBtn');
+      const resultDiv = document.getElementById('result');
+
+      confirmBtn.addEventListener('click', async () => {
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "⏳ กำลังส่งข้อมูล...";
+        
+        try {
+          const orderDetails = {
+            customer: customerData,
+            items: checkoutCart,
+            totalAmount: totalAmount,
+            slipUrl: "ไม่มีสลิป" // ระบุว่าไม่มีสลิป
+          };
+
+          const saveData = { action: 'saveOrder', order: orderDetails };
+
+          const res = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(saveData)
+          });
+          
+          const resultData = await res.json();
+          if (resultData.result !== 'success') throw new Error(resultData.message);
+
+          // แสดงผลเมื่อสำเร็จ
+          localStorage.removeItem('cart');
+          sessionStorage.clear();
+          updateCartCount();
+          document.querySelector('.payment-container').innerHTML = `
+            <div class="success-box">
+              <h2>✅ บันทึกการจองสำเร็จ</h2>
+              <p>หมายเลขการจอง: <strong>${resultData.transactionId}</strong></p>
+              <p>ทีมงานจะติดต่อกลับเพื่อยืนยันและแจ้งรายละเอียดการชำระเงิน ขอบคุณครับ</p>
+              <a href="track.html" class="confirm-btn">กลับสู่หน้ารายการ</a>
+            </div>
           `;
-        } else {
-          throw new Error(data.message || 'เกิดข้อผิดพลาด');
+
+        } catch (err) {
+          resultDiv.textContent = `❌ เกิดข้อผิดพลาด: ${err.message}`;
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = "ยืนยันการเช่า";
         }
-      })
-      .catch(error => {
-        resultDiv.textContent = `เกิดข้อผิดพลาด: ${error.message}`;
-        resultDiv.className = 'error';
-        resultDiv.style.display = 'block';
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'ยืนยันและบันทึก';
       });
     });
-
-    updateSummary();
   </script>
-
 </body>
 </html>

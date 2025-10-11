@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ชำระเงิน | Pixelmotion</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="payment-container container">
+    <h1>ชำระเงิน (พร้อมเพย์)</h1>
+    <div class="qr-box">
+      <div id="amountText" style="font-size:1.4rem;color:var(--primary-color);margin-top:6px;"></div>
+      <img id="qrImage" src="" alt="PromptPay QR">
+    </div>
+
+    <form id="payForm" novalidate>
+      <div class="form-group">
+        <label for="slip">หลักฐานการโอน (สลิป)</label>
+        <input type="file" id="slip" name="slip" accept="image/*" required>
+      </div>
+      <button type="submit" id="confirmBtn" class="confirm-btn">✅ ยืนยันการชำระเงิน</button>
+      <div id="result" style="margin-top:10px;"></div>
+    </form>
+  </div>
+
+  <div class="navbar">
+    <a href="index.html">🏠<span>หน้าหลัก</span></a>
+    <a href="track.html" class="active">📋<span>รายการ</span></a>
+    <a href="cart.html">🛒<span id="cart-count">ตะกร้า (0)</span></a>
+    <a href="profile.html">👤<span>ติดต่อเรา</span></a>
+  </div>
+
+  <script src="scripts/cart.js"></script>
+  <script>
+    const SCRIPT_URL = "YOUR_NEW_GOOGLE_APPS_SCRIPT_URL"; // ◀️◀️ ใส่ URL ของสคริปต์ใหม่
+    const PROMPTPAY_NUMBER = "0972653945"; // ◀️◀️ ใส่เบอร์พร้อมเพย์ของคุณ
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const finalOrder = JSON.parse(sessionStorage.getItem('finalOrder'));
+      if (!finalOrder) {
+        window.location.href = 'cart.html';
+        return;
+      }
+
+      const totalAmount = finalOrder.totalAmount;
+      document.getElementById('amountText').textContent = `ยอดชำระ: ${totalAmount.toLocaleString('th-TH', { minimumFractionDigits: 2 })} บาท`;
+      document.getElementById('qrImage').src = `https://promptpay.io/${PROMPTPAY_NUMBER}/${totalAmount.toFixed(2)}.png`;
+
+      document.getElementById('payForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const slipInput = document.getElementById('slip');
+        const confirmBtn = document.getElementById('confirmBtn');
+        const resultDiv = document.getElementById('result');
+
+        if (!slipInput.files[0]) {
+          alert("กรุณาแนบสลิปการโอนเงิน");
+          return;
+        }
+
+        confirmBtn.disabled = true;
+        confirmBtn.textContent = "⏳ กำลังดำเนินการ...";
+        resultDiv.textContent = "";
+
+        try {
+          // Step 1: Upload Slip
+          let slipUrl = "";
+          const slipFormData = new FormData();
+          slipFormData.append('action', 'uploadSlip');
+          slipFormData.append('slip', slipInput.files[0], slipInput.files[0].name);
+
+          const uploadRes = await fetch(SCRIPT_URL, { method: 'POST', body: slipFormData });
+          const uploadData = await uploadRes.json();
+          if (uploadData.result !== 'success') throw new Error(uploadData.message || 'อัปโหลดสลิปไม่สำเร็จ');
+          slipUrl = uploadData.slipUrl;
+
+          // Step 2: Save Order Data
+          const orderData = {
+            action: 'saveOrder',
+            order: { ...finalOrder, slipUrl: slipUrl }
+          };
+
+          const saveRes = await fetch(SCRIPT_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(orderData)
+          });
+          const saveData = await saveRes.json();
+          if (saveData.result !== 'success') throw new Error(saveData.message || 'บันทึกข้อมูลไม่สำเร็จ');
+          
+          // Success
+          localStorage.removeItem('cart'); // ล้างตะกร้าเมื่อสำเร็จ
+          updateCartCount();
+          document.querySelector('.payment-container').innerHTML = `
+            <div class="success-box">
+              <h2>✅ ชำระเงินเรียบร้อย</h2>
+              <p>หมายเลขคำสั่งซื้อ: <strong>${saveData.transactionId}</strong></p>
+              <p>ขอบคุณที่ใช้บริการครับ!</p>
+              <a href="track.html" class="confirm-btn">กลับสู่หน้ารายการ</a>
+            </div>
+          `;
+
+        } catch (err) {
+          resultDiv.textContent = `❌ เกิดข้อผิดพลาด: ${err.message}`;
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = "✅ ยืนยันการชำระเงิน";
+        }
+      });
+    });
+  </script>
+</body>
+</html>
