@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Admin Login</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    /* Login-specific styles */
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .login-container {
+      max-width: 400px;
+      width: 100%;
+      padding: 30px 40px;
+      background-color: var(--light-bg);
+      border-radius: var(--border-radius);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    .login-container h1 {
+      margin-top: 0;
+      margin-bottom: 25px;
+    }
+    .error-msg {
+      color: #ff5c5c;
+      background-color: rgba(255, 92, 92, 0.1);
+      border: 1px solid #ff5c5c;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      margin-top: 15px;
+      display: none; /* Hidden by default */
+    }
+  </style>
+</head>
+<body>
+
+  <div class="login-container">
+    <h1>Admin Access</h1>
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="secretKey">Secret Key</label>
+        <input id="secretKey" name="secretKey" type="password" placeholder="Enter your secret key" required>
+      </div>
+      <button type="submit" class="confirm-btn">Login</button>
+    </form>
+    <div id="errorMessage" class="error-msg"></div>
+  </div>
+
+  <script>
+    // ดึงค่า SECRET KEY จาก Google Apps Script ของคุณ
+    // **สำคัญมาก:** ต้องเป็นค่าเดียวกับที่ตั้งไว้ในไฟล์ Code.gs
+    const ADMIN_SECRET_KEY = "123456"; // <-- แก้ไขเป็น Secret Key ของคุณ
+
+    const loginForm = document.getElementById('loginForm');
+    const secretKeyInput = document.getElementById('secretKey');
+    const errorMessage = document.getElementById('errorMessage');
+
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const enteredKey = secretKeyInput.value;
+
+      if (enteredKey === ADMIN_SECRET_KEY) {
+        // --- Login สำเร็จ ---
+        // 1. เก็บ Secret Key ไว้ใน sessionStorage เพื่อให้หน้า dashboard นำไปใช้ต่อได้
+        sessionStorage.setItem('adminSecretKey', enteredKey);
+        
+        // 2. เปลี่ยนเส้นทางไปยังหน้า dashboard
+        window.location.href = 'index.html';
+
+      } else {
+        // --- Login ไม่สำเร็จ ---
+        errorMessage.textContent = 'Secret Key ไม่ถูกต้อง!';
+        errorMessage.style.display = 'block';
+        secretKeyInput.focus();
+      }
+    });
+  </script>
+
+</body>
+</html>

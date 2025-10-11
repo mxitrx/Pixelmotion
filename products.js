@@ -19,16 +19,16 @@ const products = [
   },
   {
     id: 'P003',
-    name: 'ไฟสตูดิโอ Softbox',
-    image: 'https://via.placeholder.com/400x300.png?text=Softbox',
-    specs: 'ชุดไฟสตูดิโอให้แสงนุ่มนวล เหมาะสำหรับถ่ายภาพบุคคลและสินค้า',
+    name: 'Ulanzi VL119 Tube Light',
+    image: 'image/ulanzi.webp',
+    specs: 'ไฟ LED ท่อทรงกระบอก ให้แสงนุ่มนวล ปรับความสว่างและอุณหภูมิสีได้',
     price: 500,
     priceText: '฿500/วัน'
   },
   {
     id: 'P004',
-    name: 'ไฟสตูดิโอ Softbox',
-    image: 'https://via.placeholder.com/400x300.png?text=Softbox',
+    name: 'ZSYB CL-80Bi Softbox',
+    image: 'image/zsyb.jpg',
     specs: 'ชุดไฟสตูดิโอให้แสงนุ่มนวล เหมาะสำหรับถ่ายภาพบุคคลและสินค้า',
     price: 500,
     priceText: '฿500/วัน'
